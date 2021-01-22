@@ -1,0 +1,402 @@
+﻿<Window x:Class="Faluevgi_Jozsef_prj.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Background="Azure" Height="800" Width="1000">
+    <Window.Resources>
+        <ControlTemplate x:Key="ErrorTemplate">
+            <DockPanel LastChildFill="True">
+                <Border BorderBrush="Red" BorderThickness="1">
+                    <AdornedElementPlaceholder />
+                </Border>
+            </DockPanel>
+        </ControlTemplate>
+
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                    Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                    Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+
+    <ScrollViewer >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+                <RowDefinition Height="46" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="200" />
+        </Grid.RowDefinitions>
+        <Label FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
+               Grid.Row="0" Content="Academic Grade Management Crud" FontWeight="Bold"/>
+        <DataGrid Name="StudentDG" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
+            Grid.Row="1" ColumnWidth="*" Margin="5" IsSynchronizedWithCurrentItem="True" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Student Id" Binding="{Binding StudentId}"/>
+                <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}"/>
+                <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}"/>
+                    <DataGridTextColumn Header="University ID" Binding="{Binding University.Name}"/>
+
+                <DataGridTemplateColumn Header="Update Student">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Edit" Click="SelectStudentForEdit"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Delete Student">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete" Click="DeleteStudent"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Margin="5" BorderThickness="1" BorderBrush="Black">
+                    <StackPanel Margin="5">
+                        <Label Content="Add new student" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+
+                        <Grid x:Name="AddNewStudentGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="First name"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FirstName, ValidatesOnDataErrors=True, NotifyOnValidationError=true}" 
+                                     Validation.ErrorTemplate="{StaticResource ErrorTemplate}"
+/>
+
+                            <Label Grid.Row="2" Grid.Column="0" Content="Last name"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding LastName, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Content="University"/>
+                            <ComboBox Grid.Row="3" Grid.Column="1" Name="UniversityCombo" HorizontalAlignment="Left" Width="231"   
+                                      SelectedIndex="0"
+                                      DisplayMemberPath="Name" 
+                                      SelectedValuePath="UniversityId"
+                                      SelectedValue="{Binding Path=UniversityId, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>    
+
+                            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Add" FontWeight="Bold" Margin="5" Click="AddStudent"/>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Margin="5" BorderThickness="1" BorderBrush="Black">
+                    <StackPanel Margin="5">
+                        <Label Content="Update student" FontWeight="Bold"
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center" Margin="5"/>
+
+                        <Grid x:Name="UpdateStudentGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="First name"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FirstName, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" Content="Last name"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding LastName, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Content="University"/>
+                            <ComboBox Grid.Row="3" Grid.Column="1" Name="UniversityCombo2" HorizontalAlignment="Left" Width="231"   
+                                      SelectedIndex="0"
+                                      DisplayMemberPath="Name" 
+                                      SelectedValuePath="UniversityId"
+                                      SelectedValue="{Binding Path=UniversityId, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Update" FontWeight="Bold" Margin="5" Click="UpdateStudent"/>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <DataGrid x:Name="GradesDG" AutoGenerateColumns="False" IsReadOnly="True"
+                  Grid.Row="3" ColumnWidth="*" Margin="5" IsSynchronizedWithCurrentItem="True" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Grade Id" Binding="{Binding GradeId}"/>
+                    <DataGridTextColumn Header="Student id" Binding="{Binding StudentId}"/>
+                    <DataGridTextColumn Header="Course Name" Binding="{Binding CourseName}"/>
+                    <DataGridTextColumn Header="Final Grade" Binding="{Binding FinalResult}"/>
+                    <DataGridTextColumn Header="Passed" Binding="{Binding Passed}"/>
+
+                    <DataGridTemplateColumn Header="Update Grade">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Edit" Click="SelectGradeForEdit"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="Delete Grade">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Delete" Click="DeleteGrade"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Grid Grid.Row="4">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" Margin="5">
+                    <StackPanel Margin="5">
+                        <Label Content="Add new Grade" HorizontalAlignment="Center"  FontWeight="Bold" VerticalAlignment="Center" Margin="5" />
+
+                        <Grid x:Name="AddNewGradeGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="Student Name"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Name="StudentCombo" HorizontalAlignment="Left" Width="231"
+                                      SelectedIndex="0"
+                                      SelectedValuePath="StudentId"
+                                      SelectedValue="{Binding Path=StudentId, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"> 
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1} (ID:{2})">
+                                                    <Binding Path="FirstName"/>
+                                                    <Binding Path="LastName"/>
+                                                    <Binding Path="StudentId"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            
+                            <Label Grid.Row="2" Grid.Column="0" Content="Course Name"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CourseName, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Content="Final Result"/>
+
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding FinalResult, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="4" Grid.Column="0" Content="Passed"/>
+                            <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding Passed, Mode=TwoWay}"/>
+                            <Button Grid.Row="5" Grid.ColumnSpan="2" Content="Add" FontWeight="Bold" Margin="5" Click="AddGrade"/>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,5" >
+                    <StackPanel Margin="5">
+                        <Label Content="Update Grade" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center"/>
+
+                        <Grid Margin="5" x:Name="UpdateGradeGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="Student Name"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Name="StudentCombo2" HorizontalAlignment="Left" Width="231"   
+                                      SelectedIndex="0"
+                                      SelectedValuePath="StudentId"
+                                      SelectedValue="{Binding Path=StudentId, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"> 
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1} (ID:{2})">
+                                                    <Binding Path="FirstName"/>
+                                                    <Binding Path="LastName"/>
+                                                    <Binding Path="StudentId"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <Label Grid.Row="2" Grid.Column="0" Content="Course Name"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CourseName, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Content="Final Result"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding FinalResult, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="4" Grid.Column="0" Content="Passed"/>
+                            <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding Passed, Mode=TwoWay}"/>
+
+                            <Button Grid.Row="5" Grid.ColumnSpan="2"  FontWeight="Bold" Content="Update" Margin="5" Click="UpdateGrade"/>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <DataGrid x:Name="UniversitiesDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="5" ColumnWidth="*" Margin="5" IsSynchronizedWithCurrentItem="True" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="University Id" Binding="{Binding UniversityId}"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Specialization" Binding="{Binding Specialization}"/>
+                    <DataGridTextColumn Header="Location" Binding="{Binding Location}"/>
+
+                    <DataGridTemplateColumn Header="Update University">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Edit" Click="SelectUniversityForEdit"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="Delete University">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Delete" Click="DeleteUniversity"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Grid Grid.Row="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,5">
+                    <StackPanel Margin="5">
+                        <Label Content="Add new University" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center"/>
+
+                        <Grid Margin="5" x:Name="AddNewUniversityGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="University Name"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" Content="Specialization"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Specialization, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Content="Location"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Location, ValidatesOnDataErrors=True, NotifyOnValidationError=true}"/>
+
+                            <Button Grid.Row="4" Grid.ColumnSpan="2" FontWeight="Bold" Content="Add" Margin="5" Click="AddUniversity"/>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,5">
+                    <StackPanel Margin="5">
+                        <Label Content="Update Univeristy" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <Grid Margin="5" x:Name="UpdateUniversityGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="University Name"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name}"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" Content="Specialization"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Specialization}"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Content="Location"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Location}"/>
+
+                            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Update" FontWeight="Bold" Margin="5" Click="UpdateUniversity"/>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Window>
